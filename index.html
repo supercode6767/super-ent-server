@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Super ENT</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+}
+
+h1 {
+    text-align: center;
+    color: white;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    background: #4facfe;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00c6ff;
+}
+
+.emploi {
+    margin-top: 20px;
+    display: grid;
+    gap: 10px;
+}
+
+.cours {
+    padding: 15px;
+    border-radius: 15px;
+    color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.cours:hover {
+    transform: scale(1.05);
+}
+
+.math { background: #ff6b6b; }
+.francais { background: #4ecdc4; }
+.sport { background: #ffe66d; color: black; }
+.histoire { background: #a29bfe; }
+.anglais { background: #ff9ff3; }
+.svt { background: #2ecc71; }
+</style>
+
+</head>
+<body>
+
+<h1>Mon ENT</h1>
+
+<div class="container">
+<div class="card">
+
+<select id="ent">
+<option value="pronote">Pronote</option>
+<option value="ecoledirecte">École Directe</option>
+</select>
+
+<input id="username" placeholder="Identifiant">
+<input id="password" type="password" placeholder="Mot de passe">
+
+<button onclick="login()">Se connecter</button>
+
+<div id="emploi" class="emploi"></div>
+
+</div>
+</div>
+
+<script>
+
+function couleur(matiere) {
+    matiere = matiere.toLowerCase();
+
+    if (matiere.includes("math")) return "math";
+    if (matiere.includes("fr")) return "francais";
+    if (matiere.includes("sport")) return "sport";
+    if (matiere.includes("histoire")) return "histoire";
+    if (matiere.includes("anglais")) return "anglais";
+    if (matiere.includes("svt")) return "svt";
+
+    return "";
+}
+
+function login() {
+
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            ent: document.getElementById("ent").value,
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => afficher(data));
+
+}
+
+function afficher(cours) {
+
+    let html = "";
+
+    cours.forEach(c => {
+        html += `
+        <div class="cours ${couleur(c.matiere)}">
+            ${c.matiere}<br>
+            ${c.jour}<br>
+            ${c.debut} - ${c.fin}
+        </div>
+        `;
+    });
+
+    document.getElementById("emploi").innerHTML = html;
+
+}
+
+</script>
+
+</body>
+</html>
